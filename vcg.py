@@ -52,6 +52,15 @@ class VCG:
             c = slot_clicks
             n = len(allocation)
 
+            def rec_pay(k):
+                """Recursively calculates the payment"""
+                if just_bids[k] < reserve or k+1 == n:
+                    return 0
+                else:
+                    return (c[k] - c[k+1]) * just_bids[k+1] + rec_pay(k+1)
+
+            return rec_pay(k)
+
             # TODO: Compute the payment and return it.
 
         def norm(totals):
@@ -60,7 +69,6 @@ class VCG:
 
         per_click_payments = norm(
             [total_payment(k) for k in range(len(allocation))])
-        
         return (list(allocation), per_click_payments)
 
     @staticmethod
