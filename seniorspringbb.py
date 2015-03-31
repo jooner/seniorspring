@@ -15,8 +15,6 @@ class seniorspringbb:
 
     def initial_bid(self, reserve):
         return self.value / 2
-        """ Why is the intial bid self.value / 2? """
-
 
     def slot_info(self, t, history, reserve):
         """Compute the following for each slot, assuming that everyone else
@@ -39,7 +37,7 @@ class seniorspringbb:
             return (s, min, max)
             
         info = map(compute, range(len(clicks)))
-#        sys.stdout.write("slot info: %s\n" % info)
+        # sys.stdout.write("slot info: %s\n" % info)
         return info
 
 
@@ -89,7 +87,7 @@ class seniorspringbb:
             return self.value
         # not going for the top
         else:
-            return self.value - (clicks[slot] / clicks[slot - 1]) * (self.value - min_bid)
+            return self.value - (float(clicks[slot]) / clicks[slot - 1]) * (self.value - min_bid)
 
     def __repr__(self):
         return "%s(id=%d, value=%d)" % (

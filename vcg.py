@@ -43,8 +43,8 @@ class VCG:
             return ([], [])
         
         (allocation, just_bids) = zip(*allocated_bids)
+        (_, all_bids) = zip(*valid_bids)
 
-        # TODO: You just have to implement this function
         def total_payment(k):
             """
             Total payment for a bidder in slot k.
@@ -54,8 +54,11 @@ class VCG:
 
             def rec_pay(k):
                 """Recursively calculates the payment"""
-                if just_bids[k] < reserve or k + 1 == n:
+                if k + 1 > n:
                     return 0
+                elif k + 1 == n:
+                    nxt_bid = 0 if len(all_bids) <= n else all_bids[k + 1]
+                    return c[k] * max(reserve, nxt_bid)
                 else:
                     return (c[k] - c[k + 1]) * just_bids[k + 1] + rec_pay(k + 1)
 
