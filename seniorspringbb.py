@@ -3,6 +3,8 @@
 import sys
 
 from gsp import GSP
+import math
+from math import pi
 from util import argmax_index
 
 class seniorspringbb:
@@ -14,7 +16,7 @@ class seniorspringbb:
 
     def initial_bid(self, reserve):
         return self.value / 2
-         """ Why is the intial bid self.value / 2? """
+        """ Why is the intial bid self.value / 2? """
 
 
     def slot_info(self, t, history, reserve):
@@ -51,26 +53,37 @@ class seniorspringbb:
         returns a list of utilities per slot.
         """
         # TODO: Fill this in
-        info = slot_info(self, t, history, reserve)
+        prev_round = history.round(t-1)
+        c1 = round(30*math.cos(pi*t/24)+50)  # Number of clicks for the top position)
+
+
+        info = self.slot_info(t, history, reserve)
 
         min_bids = []
-        slot_id = []
+        slot_ids = []
 
-        for x in range(0, len(info)-1):
-            min_bids[x] = info[x][1]
-            slot_id[x] = info[x][0]
+        for x in range(0, len(info)):
+            min_bids.append(info[x][1])
+            slot_ids.append(info[x][0])
 
-        """calculate position factor"""
+        """calculate position factors = p"""
     
-        p = []
+        """For some reason we don't calculate the number of clicks by ourself?
+        but instead take the number of clicks from last round? Makes no sense to me.
 
-        for i in range(0, len(min_bids)-1):
-            p[i] =  pow(0.75, )
+        clicks = [] #Number of clicks for each spot positions
 
-        """calculate utilities = [value - (min_bid )]*p"""
+        for i in range(0, len(slot_ids)):
+            clicks.append(round(c1*pow(0.75, i))) 
+            """
 
-        utilities = [(a-b)*c for a,b,c in zip(self.value, min_bids, p)]
-        
+        clicks = prev_round.clicks
+
+        #calculate utilities = [value per click - (min_bid per click)]*number of clicks
+
+
+        utilities = [(self.value-b)*c for b,c in zip(min_bids, clicks)]
+    
         return utilities
 
     def target_slot(self, t, history, reserve):
@@ -103,21 +116,23 @@ class seniorspringbb:
         the winner is determined randomly. Epsilon ensures that agent wins the 
         slot"""
 
-        let epsilon = 0.0000000000000000000000000000000000000001
+        epsilon = 0.0000000000000000000000000000000000000001
 
         # TODO: Fill this in.
         #If going for the top:
 
         #top slot_id = 0
 
-        if slot = 0: 
+        if slot == 0: 
             return self.value
         #If not expecting to win (p_k* > w_i), then bid w_i in this period
-        else if min_bid + epsilon > self.value: 
+        elif min_bid + epsilon > self.value: 
             return self.value
 
-        else bid = self.value - epsilon - pow(0.75, slot)/pow(0.75, slot+1)*(self.value - min_bid) # change this
+        else: 
+            bid = self.value - epsilon - int(0.75*(self.value - min_bid)) # change this
         
+    
         return bid
 
     def __repr__(self):
