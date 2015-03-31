@@ -54,10 +54,10 @@ class VCG:
 
             def rec_pay(k):
                 """Recursively calculates the payment"""
-                if just_bids[k] < reserve or k+1 == n:
+                if just_bids[k] < reserve or k + 1 == n:
                     return 0
                 else:
-                    return (c[k] - c[k+1]) * just_bids[k+1] + rec_pay(k+1)
+                    return (c[k] - c[k + 1]) * just_bids[k + 1] + rec_pay(k + 1)
 
             return rec_pay(k)
 

@@ -3,8 +3,7 @@
 import sys
 
 from gsp import GSP
-import math
-from math import pi
+from math import pi, cos
 from util import argmax_index
 
 class seniorspringbb:
@@ -52,39 +51,12 @@ class seniorspringbb:
 
         returns a list of utilities per slot.
         """
-        # TODO: Fill this in
-        prev_round = history.round(t-1)
-        c1 = round(30*math.cos(pi*t/24)+50)  # Number of clicks for the top position)
-
-
+        prev_round, min_bids = history.round(t-1), []
+        clicks = prev_round.clicks
         info = self.slot_info(t, history, reserve)
-
-        min_bids = []
-        slot_ids = []
-
         for x in range(0, len(info)):
             min_bids.append(info[x][1])
-            slot_ids.append(info[x][0])
-
-        """calculate position factors = p"""
-    
-        """For some reason we don't calculate the number of clicks by ourself?
-        but instead take the number of clicks from last round? Makes no sense to me.
-
-        clicks = [] #Number of clicks for each spot positions
-
-        for i in range(0, len(slot_ids)):
-            clicks.append(round(c1*pow(0.75, i))) 
-            """
-
-        clicks = prev_round.clicks
-
-        #calculate utilities = [value per click - (min_bid per click)]*number of clicks
-
-
-        utilities = [(self.value-b)*c for b,c in zip(min_bids, clicks)]
-    
-        return utilities
+        return [(self.value - b) * c for b, c in zip(min_bids, clicks)]
 
     def target_slot(self, t, history, reserve):
         """Figure out the best slot to target, assuming that everyone else
@@ -110,30 +82,14 @@ class seniorspringbb:
         # If s*_j is the top slot, bid the value v_j
 
         prev_round = history.round(t-1)
+        clicks = prev_round.clicks
         (slot, min_bid, max_bid) = self.target_slot(t, history, reserve)
-        
-        """ epsilon is added because if the bid equals exactly the min_bid, 
-        the winner is determined randomly. Epsilon ensures that agent wins the 
-        slot"""
-
-        epsilon = 0.0000000000000000000000000000000000000001
-
-        # TODO: Fill this in.
-        #If going for the top:
-
-        #top slot_id = 0
-
-        if slot == 0: 
+        # not expecting to win or going for the top
+        if min_bid >= self.value or slot == 0:
             return self.value
-        #If not expecting to win (p_k* > w_i), then bid w_i in this period
-        elif min_bid + epsilon > self.value: 
-            return self.value
-
-        else: 
-            bid = self.value - epsilon - int(0.75*(self.value - min_bid)) # change this
-        
-    
-        return bid
+        # not going for the top
+        else:
+            return self.value - (clicks[slot] / clicks[slot - 1]) * (self.value - min_bid)
 
     def __repr__(self):
         return "%s(id=%d, value=%d)" % (
