@@ -14,6 +14,7 @@ class seniorspringbb:
 
     def initial_bid(self, reserve):
         return self.value / 2
+         """ Why is the intial bid self.value / 2? """
 
 
     def slot_info(self, t, history, reserve):
@@ -50,8 +51,25 @@ class seniorspringbb:
         returns a list of utilities per slot.
         """
         # TODO: Fill this in
-        utilities = []   # Change this
+        info = slot_info(self, t, history, reserve)
 
+        min_bids = []
+        slot_id = []
+
+        for x in range(0, len(info)-1):
+            min_bids[x] = info[x][1]
+            slot_id[x] = info[x][0]
+
+        """calculate position factor"""
+    
+        p = []
+
+        for i in range(0, len(min_bids)-1):
+            p[i] =  pow(0.75, )
+
+        """calculate utilities = [value - (min_bid )]*p"""
+
+        utilities = [(a-b)*c for a,b,c in zip(self.value, min_bids, p)]
         
         return utilities
 
@@ -80,9 +98,25 @@ class seniorspringbb:
 
         prev_round = history.round(t-1)
         (slot, min_bid, max_bid) = self.target_slot(t, history, reserve)
+        
+        """ epsilon is added because if the bid equals exactly the min_bid, 
+        the winner is determined randomly. Epsilon ensures that agent wins the 
+        slot"""
+
+        let epsilon = 0.0000000000000000000000000000000000000001
 
         # TODO: Fill this in.
-        bid = 0  # change this
+        #If going for the top:
+
+        #top slot_id = 0
+
+        if slot = 0: 
+            return self.value
+        #If not expecting to win (p_k* > w_i), then bid w_i in this period
+        else if min_bid + epsilon > self.value: 
+            return self.value
+
+        else bid = self.value - epsilon - pow(0.75, slot)/pow(0.75, slot+1)*(self.value - min_bid) # change this
         
         return bid
 
