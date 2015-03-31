@@ -10,9 +10,6 @@ from seniorspringbb import seniorspringbb
 
 def dual_assert(x,y):
     B = (x==y or int(x)==int(y))  
-    print x
-    print int(x)
-    print int(y)
     assert B
 
 def test_bb():
