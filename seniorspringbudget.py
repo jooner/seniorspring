@@ -6,6 +6,7 @@ from gsp import GSP
 from util import argmax_index
 import math
 from math import pi
+from math import pi 
 
 class seniorspringbudget:
     """Balanced bidding agent"""
@@ -42,8 +43,6 @@ class seniorspringbudget:
         info = map(compute, range(len(clicks)))
 #        sys.stdout.write("slot info: %s\n" % info)
         return info
-
-
 
     def expected_utils(self, t, history, reserve):
         
@@ -125,12 +124,17 @@ class seniorspringbudget:
         # If s*_j is the top slot, bid the value v_j
 
         prev_round = history.round(t-1)
+        clicks = prev_round.clicks
         (slot, min_bid, max_bid) = self.target_slot(t, history, reserve)
 
         # TODO: Fill this in.
         bid = 0  # change this
-        
-        return bid
+        if min_bid >= self.value or slot == 0:
+            return self.value
+        # not going for the top
+        else:
+            return self.value - (float(clicks[slot]) / clicks[slot - 1]) * (self.value - min_bid)
+
 
     def __repr__(self):
         return "%s(id=%d, value=%d)" % (

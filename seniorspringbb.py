@@ -28,7 +28,6 @@ class seniorspringbb:
         """
         prev_round = history.round(t-1)
         other_bids = filter(lambda (a_id, b): a_id != self.id, prev_round.bids)
-
         clicks = prev_round.clicks
         def compute(s):
             (min, max) = GSP.bid_range_for_slot(s, clicks, reserve, other_bids)
@@ -39,7 +38,6 @@ class seniorspringbb:
         info = map(compute, range(len(clicks)))
         # sys.stdout.write("slot info: %s\n" % info)
         return info
-
 
     def expected_utils(self, t, history, reserve):
         """
