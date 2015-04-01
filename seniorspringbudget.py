@@ -5,7 +5,7 @@ import sys
 from gsp import GSP
 from util import argmax_index
 import math
-import pi from math
+from math import pi
 
 class seniorspringbudget:
     """Balanced bidding agent"""
@@ -45,35 +45,29 @@ class seniorspringbudget:
 
 
 
-    def expected_utils(self, t, bid, reserve):
+    def expected_utils(self, t, history, reserve):
         
-        """take as input a list of projected bids for next round and calculate 
-        total utility of each slot given budget constraint assuming bids will stay constant"""
-
         """
-        Figure out the expected utility of bidding such that we win each
-        slot, assuming that everyone else keeps their bids constant from
-        the previous round.
+        Figure out the expected total utility of bidding such that we win each
+        slot for rest of the bidding day, assuming that everyone else keeps their bids constant 
+        from this round.
 
-        returns a list of utilities per slot.
+        returns a tuple list of (total utilities of a slot, total cost of a slot)
         """
         
-        min_bids, clicks_topspot, clicks = [], [], []
-
-        for i in range(t, 48):
-            clicks_topspot.append(round(30*math.cos(pi*t/24)+50))
-
         info = self.slot_info(t, history, reserve)
 
-        for x in range(0, len(info))
+
+        min_bids, clicks_topspot = [], []
+
+        for i in range(48):
+            clicks_topspot.append(round(30*math.cos(pi*t/24)+50))
+
+        for x in range(0, len(info)):
             min_bids.append(info[x][1])
-            clicks.append(round(clicks_topspot[t]*pow(0.75, x)))
 
-        #utilities_this_round =  [(self.value - b) * c for b, c in zip(min_bids, clicks)]
-        
-        utilites_total = [0 in range(0, len(info))]
-
-        cost_total = [0 in range(0, len(info))]
+        utilities = []
+        costs = []
 
         for x in range(t, 48):
             clicks = []
@@ -86,9 +80,12 @@ class seniorspringbudget:
             utilities_this_round = [(self.value - b) * c for b, c in zip(min_bids, clicks)]
             cost_this_round = [b*c for b,c in zip(min_bids, clicks)]
 
-            utilities_total = [a+b for a, b in zip(utilities_total, utilites_this_round)]
-            cost_total = [a+b for a, b in zip(cost_total, cost_this_round)]
+            utilities.append(utilities_this_round)
+            costs.append(cost_this_round)
 
+        utilities_total = [sum(x) for x in zip(*utilities)]
+        cost_total = [sum(x) for x in zip(*costs)]
+        
         return zip(utilities_total, cost_total)
 
     def target_slot(self, t, history, reserve):
@@ -100,7 +97,19 @@ class seniorspringbudget:
         the other-agent bid for that slot in the last round.  If slot_id = 0,
         max_bid is min_bid * 2
         """
-        i =  argmax_index(self.expected_utils(t, history, reserve))
+
+        utilities_budget = self.expected_utils(t, history, reserve)
+
+        sustainable_utilities = []
+
+        for x in range(0, len(utilities_budget)):
+            if utilities_budget[x][1] > self.budget:
+                sustainable_utilities.append(0)
+            else:
+                sustainable_utilities.append(utilities_budget[x][0])
+
+        i =  argmax_index(sustainable_utilities)
+
         info = self.slot_info(t, history, reserve)
         return info[i]
 
