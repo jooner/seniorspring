@@ -23,27 +23,26 @@ class seniorspringbudget:
         return self.value / 2
 
     def click_calc(self, history, t):
-        """
-        Now we actually calculate the clicks per round instead of naively assuming
-        it will remain constant
-        """
         payment_record = history.round(t-1).slot_payments
         c1 = round(30 * cos(pi * t / 24) + 50)
         return [c1 * pow(0.75, y) for y in range (0, len(payment_record))]
+
+    def budget_calc(self, history):
+        all_budget = [BUDGET - history.agents_spent[i] for i in range(0, history.n_agents)]
+        my_budget = all_budget.pop(self.id)
+        return my_budget, all_budget
 
     def bid_predictor(self, history, t):
         """
         Instead of naively assuming bids will remain constant, we estimate
         what their next move might be based on their cumulative history and budget
         """
-        n_agents = history.n_agents
-        others_budget = [BUDGET - history.agents_spent[i] for i in range(0, n_agents)]
-        del others_budget[self.id]
+        _, others_budget = self.budget_calc(history)
         prev1 = filter(lambda (a_id, b): a_id != self.id, history.round(t-1).bids)
         if t > 1:
             projected_bid = []
             prev2 = filter(lambda (a_id, b): a_id != self.id, history.round(t-2).bids)
-            for i in range(0, n_agents - 1):
+            for i in range(0, history.n_agents - 1):
                 if others_budget[i] > 0:
                     # b1 is the most recent, b2 is the bid before
                     b1, b2 = prev1[i][1], prev2[i][1]
@@ -127,11 +126,11 @@ class seniorspringbudget:
         the other-agent bid for that slot in the last round.  If slot_id = 0,
         max_bid is min_bid * 2
         """
-
+        remaining_budget, _ = self.budget_calc(history)
         utilities_budget = self.expected_utils(t, history, reserve)
         sustainable_utilities = []
         for x in range(0, len(utilities_budget)):
-            if utilities_budget[x][1] > self.budget:
+            if utilities_budget[x][1] > remaining_budget:
                 sustainable_utilities.append(0)
             else:
                 sustainable_utilities.append(utilities_budget[x][0])
@@ -161,5 +160,4 @@ class seniorspringbudget:
     def __repr__(self):
         return "%s(id=%d, value=%d)" % (
             self.__class__.__name__, self.id, self.value)
-
 
