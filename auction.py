@@ -98,6 +98,7 @@ def sim(config):
             have_money = lambda a: total_spent(a.id, t) < config.budget
             still_have_money = filter(have_money, agents)
             current_bids = []
+            
             for a in agents:
                 b = a.bid(t, history, reserve)
                 if total_spent(a.id, t) < config.budget:

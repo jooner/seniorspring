@@ -132,8 +132,10 @@ class seniorspringbudget:
         if min_bid >= self.value or slot == 0:
             return self.value
         # not going for the top
+
         else:
-            return self.value - (float(clicks[slot]) / clicks[slot - 1]) * (self.value - min_bid)
+            bid = self.value - (float(clicks[slot]) / clicks[slot - 1]) * (self.value - min_bid)
+            return bid
 
 
     def __repr__(self):
