@@ -5,7 +5,7 @@ import sys
 from gsp import GSP
 from util import argmax_index
 import math
-import pi from math
+from math import pi 
 
 class seniorspringbudget:
     """Balanced bidding agent"""
@@ -43,7 +43,7 @@ class seniorspringbudget:
 #        sys.stdout.write("slot info: %s\n" % info)
         return info
 
-    def expected_utils(self, t, bid, reserve):
+    def expected_utils(self, t, history, reserve):
         
         """take as input a list of projected bids for next round and calculate 
         total utility of each slot given budget constraint assuming bids will stay constant"""
@@ -63,15 +63,14 @@ class seniorspringbudget:
 
         info = self.slot_info(t, history, reserve)
 
-        for x in range(0, len(info))
+        for x in range(0, len(info)):
             min_bids.append(info[x][1])
             clicks.append(round(clicks_topspot[t]*pow(0.75, x)))
 
         #utilities_this_round =  [(self.value - b) * c for b, c in zip(min_bids, clicks)]
         
-        utilites_total = [0 in range(0, len(info))]
-
-        cost_total = [0 in range(0, len(info))]
+        utilites_total = [0 for i in range(0, len(info))]
+        cost_total = [0 for i in range(0, len(info))]
 
         for x in range(t, 48):
             clicks = []
