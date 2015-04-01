@@ -334,7 +334,7 @@ def main(args):
     for i in range(options.iters):
         values = get_utils(n, options)
         logging.info("==== Iteration %d / %d.  Values %s ====" % (i, options.iters, values))
-        ## Create permutations (permutes the random values, and assigns them to agents)
+        ## Create permutations (permutes the fom values, and assigns them to agents)
         if approx:
             perms = [shuffled(values) for i in range(options.max_perms)]
         else:
@@ -360,7 +360,6 @@ def main(args):
 
     ## total_spent = total amount of money spent by agents, for all iterations, all permutations, all rounds
     
-
     # Averages are over all the value permutations considered    
     N = float(num_perms) * options.iters
     logging.info("%s\t\t%s\t\t%s" % ("#" * 15, "RESULTS", "#" * 15))
