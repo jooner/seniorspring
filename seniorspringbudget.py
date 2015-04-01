@@ -40,7 +40,6 @@ class seniorspringbudget:
 #        sys.stdout.write("slot info: %s\n" % info)
         return info
 
-
     def expected_utils(self, t, history, reserve):
         """
         Figure out the expected utility of bidding such that we win each
@@ -83,8 +82,12 @@ class seniorspringbudget:
 
         # TODO: Fill this in.
         bid = 0  # change this
-        
-        return bid
+        if min_bid >= self.value or slot == 0:
+            return self.value
+        # not going for the top
+        else:
+            return self.value - (float(clicks[slot]) / clicks[slot - 1]) * (self.value - min_bid)
+
 
     def __repr__(self):
         return "%s(id=%d, value=%d)" % (
