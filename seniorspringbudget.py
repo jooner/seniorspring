@@ -5,7 +5,7 @@ import sys
 from gsp import GSP
 from util import argmax_index
 import math
-from math import pi 
+from math import pi, cos
 
 class seniorspringbudget:
     """Balanced bidding agent"""
@@ -29,10 +29,10 @@ class seniorspringbudget:
         and max_bid would result in ending up in that slot)
         """
         prev_round = history.round(t-1)
-
         other_bids = filter(lambda (a_id, b): a_id != self.id, prev_round.bids)
+        clicks = round(30 * cos(pi * t / 24) + 50)
 
-        clicks = prev_round.clicks
+
         def compute(s):
             (min, max) = GSP.bid_range_for_slot(s, clicks, reserve, other_bids)
             if max == None:
