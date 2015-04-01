@@ -34,7 +34,7 @@ class seniorspringbudget:
         Instead of naively assuming bids will remain constant, we estimate
         what their next move might be based on their cumulative history and budget
         """
-        BUDGET = self.budget #since self.budget does not get updated, BUDGET is the same for all agents
+        BUDGET = self.budget
         n_agents = history.n_agents
         others_budget = [BUDGET - history.agents_spent[i] for i in range(0, n_agents)]
         del others_budget[self.id]
@@ -72,7 +72,6 @@ class seniorspringbudget:
     def slot_info(self, t, history, reserve):
         """Compute the following for each slot, assuming that everyone else
         keeps their bids constant from the previous rounds.
-
         Returns list of tuples [(slot_id, min_bid, max_bid)], where
         min_bid is the bid needed to tie the other-agent bid for that slot
         in the last round.  If slot_id = 0, max_bid is 2* min_bid.
@@ -97,7 +96,6 @@ class seniorspringbudget:
         """
         Figure out the expected total utility of bidding such that we win each
         slot for rest of the bidding day
-
         returns a tuple list of (total utilities of a slot, total cost of a slot)
         """
         
@@ -121,7 +119,6 @@ class seniorspringbudget:
         """Figure out the best slot to target, assuming that everyone else
         keeps their bids the same as this round. The best slot to target should be the one that maximizes the
         total utility over the entire period while not going over budget
-
         Returns (slot_id, min_bid, max_bid), where min_bid is the bid needed to tie
         the other-agent bid for that slot in the last round.  If slot_id = 0,
         max_bid is min_bid * 2
@@ -130,13 +127,12 @@ class seniorspringbudget:
         utilities_budget = self.expected_utils(t, history, reserve)
         sustainable_utilities = []
         for x in range(0, len(utilities_budget)):
-            if utilities_budget[x][1] > (self.budget -  history.agents_spent[self.id]):
+            if utilities_budget[x][1] > (self.budget - history.agents_spent[self.id]):
                 sustainable_utilities.append(0)
             else:
                 sustainable_utilities.append(utilities_budget[x][0])
         i =  argmax_index(sustainable_utilities)
         info = self.slot_info(t, history, reserve)
-        #print self.budget-history.agents_spent[self.id]
         return info[i]
 
     def bid(self, t, history, reserve):
@@ -154,16 +150,10 @@ class seniorspringbudget:
         (slot, min_bid, max_bid) = self.target_slot(t, history, reserve)
         if min_bid >= self.value or slot == 0 or clicks < 30:
             return self.value
-
-        # not going for the top
-
         else:
             return self.value * AGG_FACT  - (float(clicks[slot]) / clicks[slot - 1]) * (self.value - min_bid)
-
 
 
     def __repr__(self):
         return "%s(id=%d, value=%d)" % (
             self.__class__.__name__, self.id, self.value)
-
-
